@@ -135,9 +135,9 @@ for dr in range(exist,exist_to):
             #     continue
             continue
         #メンテ中なら何も書き込まないでジョブ即終了
-        if data.find('../../board_style/board_notice/img/list_count.gif') > 0:
-            print("korea-rs is maintenance now...")
-            break
+        # if data.find('../../board_style/board_notice/img/list_count.gif') > 0:
+        #     print("korea-rs is maintenance now...")
+        #     break
 
         if dev_flag:
             with open(dir_name + str(dr) + ".html", "w", encoding='utf-8') as f:
