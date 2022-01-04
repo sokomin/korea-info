@@ -10,28 +10,34 @@ import sys
 args = sys.argv
 dir_name = 'out/origin/'
 dir_name_f = 'out/origin_front/'
+exist_file_name = 'exist_local.txt'
 Path(dir_name).mkdir(parents=True, exist_ok=True)
+get_num = 10
 
 # 第一引数に1以上指定でGitHubActionsモードになる(originを生成しない)
 dev_flag = True
 if len(args) > 1:
     if int(args[1]) > 0:
         dev_flag = False
+        exist_file_name = 'exist.txt'
 # 第二引数に1以上指定でローカルモードになる(originのみ生成)
 local_flag = True
-if len(args) > 1:
+if len(args) > 2:
     if int(args[2]) > 0:
         local_flag = False
-
+# 第3引数に取得したい数を入れる
+if len(args) > 3:
+    if int(args[3]) > 0:
+        get_num = args[3]
 
 exist = 7300
-with open('exist.txt', 'r') as f:
+with open(exist_file_name, 'r') as f:
     line = f.read()
     if int(line) > 0:
         exist = int(line)
 
 delete_num = 200
-exist_to = exist + 10
+exist_to = exist + int(get_num)
 overwrite = exist
 
 for dr in range(exist,exist_to):
@@ -126,16 +132,17 @@ for dr in range(exist,exist_to):
         if dev_flag:
             with open(dir_name + str(dr) + ".html", "w", encoding='utf-8') as f:
                 f.write(str(data))
+                overwrite = dr
         if local_flag:
-            overwrite = dr
             with open(dir_name_f + str(dr) + ".html", "w", encoding='utf-8') as f:
                 f.write(str(data))
+                overwrite = dr
     except:
         print("[error] get error." +str(dr))
         traceback.print_exc()
 
 
-with open('exist.txt', "w", encoding='utf-8') as f:
+with open(exist_file_name, "w", encoding='utf-8') as f:
     f.write(str(overwrite))
 
 

@@ -1,6 +1,7 @@
 # 入力・出力ファイル
 out/origin/*
-
+# ローカルと本番で.txtを分離したい。
+exist_local.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
