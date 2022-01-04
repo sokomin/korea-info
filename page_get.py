@@ -37,8 +37,9 @@ with open(exist_file_name, 'r') as f:
         exist = int(line)
 
 delete_num = 200
-exist_to = exist + int(get_num)
 overwrite = exist
+exist = exist + 1
+exist_to = exist + int(get_num)
 
 for dr in range(exist,exist_to):
     try:
@@ -133,6 +134,10 @@ for dr in range(exist,exist_to):
             # else:
             #     continue
             continue
+        #メンテ中なら何も書き込まないでジョブ即終了
+        if data.find('../../board_style/board_notice/img/list_count.gif') > 0:
+            print("korea-rs is maintenance now...")
+            break
 
         if dev_flag:
             with open(dir_name + str(dr) + ".html", "w", encoding='utf-8') as f:
