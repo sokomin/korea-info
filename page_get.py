@@ -127,6 +127,11 @@ for dr in range(exist,exist_to):
         # Not foundならそこで止める
         if data.find('../../board_style/board_notice/img/list_count.gif') > 0:
             print(str(dr) + "is not found page.")
+            # TODO 上手いこと最新ならbreakするロジックを導入したい
+            # if dev_flag == False:
+            #     break
+            # else:
+            #     continue
             continue
 
         if dev_flag:
