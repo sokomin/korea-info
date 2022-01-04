@@ -5,10 +5,24 @@ import re
 import os
 import shutil
 import traceback
+import sys
 
+args = sys.argv
 dir_name = 'out/origin/'
 dir_name_f = 'out/origin_front/'
 Path(dir_name).mkdir(parents=True, exist_ok=True)
+
+# 第一引数に1以上指定でGitHubActionsモードになる(originを生成しない)
+dev_flag = True
+if len(args) > 1:
+    if int(args[1]) > 0:
+        dev_flag = False
+# 第二引数に1以上指定でローカルモードになる(originのみ生成)
+local_flag = True
+if len(args) > 1:
+    if int(args[2]) > 0:
+        local_flag = False
+
 
 exist = 7300
 with open('exist.txt', 'r') as f:
@@ -18,7 +32,7 @@ with open('exist.txt', 'r') as f:
 
 delete_num = 200
 exist_to = exist + 10
-overwrite = 0
+overwrite = exist
 
 for dr in range(exist,exist_to):
     try:
@@ -53,11 +67,12 @@ for dr in range(exist,exist_to):
 
         # ファイル量多くなるとGitHubから怒られるので最新100件のみ保存
         # gitのcommitlog辿れば過去のデータ手に入るしいいよね理論
-        del_file = dr - delete_num
-        last_file = dir_name_f + str(del_file) + ".html"
-        print("delete:" + str(last_file))
-        if os.path.exists(last_file):
-            os.remove(last_file)
+        if local_flag:
+            del_file = dr - delete_num
+            last_file = dir_name_f + str(del_file) + ".html"
+            print("delete:" + str(last_file))
+            if os.path.exists(last_file):
+                os.remove(last_file)
 
         data = re.sub('http://redstone.logickorea.co.kr/notice/noticeboard/view.aspx\?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
         data = re.sub('http://redstone.logickorea.co.kr/notice/updateboard/view.aspx\?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
@@ -79,19 +94,22 @@ for dr in range(exist,exist_to):
                 # print(img_dir_path)
                 if r.status_code == 200:
                     Path(img_dir_path).mkdir(parents=True, exist_ok=True)
-                    with open(img_dir_path+str(img_path),'wb') as f:
-                        r.raw.decode_content = True
-                        f.write(r.content)
+                    if local_flag:
+                        with open(img_dir_path+str(img_path),'wb') as f:
+                            r.raw.decode_content = True
+                            f.write(r.content)
                     #origin側は全部ダウンロードする
-                    Path(img_dir_origin_path).mkdir(parents=True, exist_ok=True)
-                    with open(img_dir_origin_path+str(img_path),'wb') as f:
-                        r.raw.decode_content = True
-                        f.write(r.content)
+                    if dev_flag:
+                        Path(img_dir_origin_path).mkdir(parents=True, exist_ok=True)
+                        with open(img_dir_origin_path+str(img_path),'wb') as f:
+                            r.raw.decode_content = True
+                            f.write(r.content)
 
         #fron側はローテーションを組む 
-        Path(dir_name_f + 'img/'+str(del_file)+'/').mkdir(parents=True, exist_ok=True)
-        print("delele folder: " + dir_name_f + 'img/'+str(del_file)+'/')
-        shutil.rmtree(dir_name_f + 'img/'+str(del_file)+'/')
+        if local_flag:
+            Path(dir_name_f + 'img/'+str(del_file)+'/').mkdir(parents=True, exist_ok=True)
+            print("delele folder: " + dir_name_f + 'img/'+str(del_file)+'/')
+            shutil.rmtree(dir_name_f + 'img/'+str(del_file)+'/')
 
         # エラー処理
         if data.find('<script type="text/javascript">document.location.href="/notice/updateboard/view.aspx?sqn=') > 0:
@@ -105,11 +123,13 @@ for dr in range(exist,exist_to):
             print(str(dr) + "is not found page.")
             continue
 
-        with open(dir_name + str(dr) + ".html", "w", encoding='utf-8') as f:
-            f.write(str(data))
-        overwrite = dr
-        with open(dir_name_f + str(dr) + ".html", "w", encoding='utf-8') as f:
-            f.write(str(data))
+        if dev_flag:
+            with open(dir_name + str(dr) + ".html", "w", encoding='utf-8') as f:
+                f.write(str(data))
+        if local_flag:
+            overwrite = dr
+            with open(dir_name_f + str(dr) + ".html", "w", encoding='utf-8') as f:
+                f.write(str(data))
     except:
         print("[error] get error." +str(dr))
         traceback.print_exc()
