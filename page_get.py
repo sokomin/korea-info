@@ -59,17 +59,13 @@ for dr in range(exist,exist_to):
         if os.path.exists(last_file):
             os.remove(last_file)
 
-        data = re.sub('http://redstone.logickorea.co.kr/notice/noticeboard/view.aspx?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
-        data = re.sub('http://redstone.logickorea.co.kr/notice/updateboard/view.aspx?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
+        data = re.sub('http://redstone.logickorea.co.kr/notice/noticeboard/view.aspx\?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
+        data = re.sub('http://redstone.logickorea.co.kr/notice/updateboard/view.aspx\?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
+        data = re.sub('https://redstone.logickorea.co.kr/notice/noticeboard/view.aspx\?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
+        data = re.sub('https://redstone.logickorea.co.kr/notice/updateboard/view.aspx\?sqn=','https://sokomin.github.io/korea-info/out/origin_front/', data)
         # 画像パス変更（ローカルでしか表示されない…）
-        # data = re.sub('<img src="','<img src="http://redstone.logickorea.co.kr', data)
         data = re.sub('<img src="','<img src="https://sokomin.github.io/korea-info/out/origin_front/img/', data)
-        # data = re.sub('src="(.*?)/(.*?).jpg"','src="https://sokomin.github.io/korea-info/out/origin_front/img/\\2.jpg"', data)
-        # data = re.sub('src="https?://[\w/:%#\$&\?\(\)~\.=\+\-]+jpg"','src="https://sokomin.github.io/korea-info/out/origin_front/img/.jpg"', data)
         data = re.sub('src="https://sokomin.github.io/korea-info/out/origin_front/img/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)" title=(.*?)>','src="https://sokomin.github.io/korea-info/out/origin_front/img/'+ str(dr) +'/\\7" title=\\8>', data)
-        # data = re.sub('src="https://sokomin.github.io/korea-info/out/origin_front/img/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)" title=(.*?)>','src="img/\\7" title=\\8>', data)
-        # data = re.sub('src="(.*)/(.*?).jpeg"','src="https://sokomin.github.io/korea-info/out/origin_front/img/\\2.jpeg"', data)
-        # data = re.sub('src="(.*)/(.*?).png"','src="https://sokomin.github.io/korea-info/out/origin_front/img/\\2.png"', data)
 
         imgs = soup.find_all('img',src=re.compile('^/ADDONS2/admAppendix'))
         for img in imgs:
@@ -85,7 +81,6 @@ for dr in range(exist,exist_to):
                     Path(img_dir_path).mkdir(parents=True, exist_ok=True)
                     with open(img_dir_path+str(img_path),'wb') as f:
                         r.raw.decode_content = True
-                        # shutil.copyfileobj(r.raw, f)
                         f.write(r.content)
                     #origin側は全部ダウンロードする
                     Path(img_dir_origin_path).mkdir(parents=True, exist_ok=True)
