@@ -89,6 +89,11 @@ for dr in range(exist,exist_to):
         data = re.sub('<img src="','<img src="https://sokomin.github.io/korea-info/out/origin_front/img/', data)
         data = re.sub('src="https://sokomin.github.io/korea-info/out/origin_front/img/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)/(.*?)" title=(.*?)>','src="https://sokomin.github.io/korea-info/out/origin_front/img/'+ str(dr) +'/\\7" title=\\8>', data)
 
+        #メンテ中なら何も書き込まないでジョブ即終了
+        if data.find('class') <= 0:
+            print("korea-rs is maintenance now...")
+            break
+
         imgs = soup.find_all('img',src=re.compile('^/ADDONS2/admAppendix'))
         for img in imgs:
                 img_src = img['src']
@@ -134,10 +139,6 @@ for dr in range(exist,exist_to):
             # else:
             #     continue
             continue
-        #メンテ中なら何も書き込まないでジョブ即終了
-        # if data.find('../../board_style/board_notice/img/list_count.gif') > 0:
-        #     print("korea-rs is maintenance now...")
-        #     break
 
         if dev_flag:
             with open(dir_name + str(dr) + ".html", "w", encoding='utf-8') as f:
